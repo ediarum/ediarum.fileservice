@@ -1,0 +1,130 @@
+/* The look of www.ediarum.org (css/ed.css): Noto Sans, a white header with
+   red links over a 4px red rule, a grey footer with white text. */
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Noto Sans"), url("../assets/fonts/noto-sans-regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noto Sans";
+  font-style: italic;
+  font-weight: 400;
+  src: local("Noto Sans Italic"), url("../assets/fonts/noto-sans-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 700;
+  src: local("Noto Sans Bold"), url("../assets/fonts/noto-sans-700.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Noto Sans";
+  font-style: italic;
+  font-weight: 700;
+  src: local("Noto Sans Bold Italic"), url("../assets/fonts/noto-sans-700italic.woff2") format("woff2");
+}
+
+:root {
+  --ed-red: #e5312e;
+  --ed-grey: #969696;
+  --md-text-font: "Noto Sans";
+  --md-primary-fg-color: var(--ed-red);
+  --md-primary-fg-color--light: #ea5f5c;
+  --md-primary-fg-color--dark: #b82724;
+  --md-accent-fg-color: var(--ed-red);
+}
+
+[data-md-color-scheme="default"] {
+  --md-typeset-a-color: var(--ed-red);
+}
+[data-md-color-scheme="slate"] {
+  --md-typeset-a-color: #f0716e;
+}
+
+/* Header and tabs: white (page background in dark mode), red text */
+.md-header,
+.md-tabs {
+  background-color: var(--md-default-bg-color);
+  color: var(--ed-red);
+}
+.md-header {
+  border-bottom: 4px solid var(--ed-red);
+  box-shadow: none;
+}
+.md-header--shadow {
+  box-shadow: none;
+}
+.md-tabs {
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+.md-tabs__link {
+  opacity: 0.8;
+}
+.md-header__button.md-logo img {
+  height: 1.6rem;
+}
+.md-search__form {
+  background-color: var(--md-default-fg-color--lightest);
+}
+.md-search__input,
+.md-search__input::placeholder,
+.md-search__icon {
+  color: var(--md-default-fg-color);
+}
+
+/* Footer (Material sets these per scheme, so override them there) */
+[data-md-color-scheme] {
+  --md-footer-bg-color: var(--ed-grey);
+  --md-footer-bg-color--dark: var(--ed-grey);
+  --md-footer-fg-color: #fff;
+  --md-footer-fg-color--light: #fff;
+  --md-footer-fg-color--lighter: rgba(255, 255, 255, 0.8);
+}
+.ed-footer a:hover {
+  text-decoration: underline;
+}
+.ed-footer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  padding: 0.8rem 0.6rem;
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+.ed-footer h4 {
+  margin: 0 0 0.6em;
+  font-size: 1.2em;
+  font-weight: 400;
+  color: #fff;
+}
+.ed-footer p {
+  margin: 0 0 0.6em;
+}
+.ed-footer p:last-child {
+  margin-bottom: 0;
+}
+/* Previous/next bar: Material's 1rem top margin is far more than needed here */
+.md-footer__link {
+  margin-top: 0.4rem;
+  margin-bottom: 0.2rem;
+}
+/* The BBAW logo carries its own whitespace above the eagle */
+.ed-footer__col:last-child img {
+  display: block;
+  width: 200px;
+  margin: -0.4rem 0 0.4rem;
+}
+.ed-footer img {
+  max-width: 100%;
+  height: auto;
+}
+@media screen and (max-width: 44.984375em) {
+  .ed-footer {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0.8rem;
+  }
+}

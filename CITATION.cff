@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+title: ediarum.fileservice
+abstract: "ediarum.fileservice keeps the TEI XML of each ediarum.platform project on a shared volume in step with ediarum.webdav and git. It writes every change webdav posts and regularly compares the volume with the git host."
+type: software
+authors:
+  - family-names: Vogl
+    given-names: Malte
+version: 0.1.2
+date-released: "2026-11-05"
+license: "AGPL-3.0-or-later"
+url: "https://www.ediarum.org"

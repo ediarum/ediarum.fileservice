@@ -1,0 +1,46 @@
+# The documentation site (mkdocs.yml) on GitHub Pages, built like the GitLab
+# `docs-build` job. Runs only on the public GitHub mirror, whose `main` gets one
+# snapshot commit per release (scripts/publish.sh); GitLab ignores this file.
+# Once in the GitHub repository: Settings → Pages → Source: GitHub Actions.
+name: docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NO_MKDOCS_2_WARNING: "1"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+          enable-cache: true
+      - run: uv sync --frozen --only-group docs
+      - run: uv run --no-sync mkdocs build -d public   # strict (mkdocs.yml)
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

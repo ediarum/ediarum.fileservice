@@ -1,0 +1,114 @@
+# The documentation site (Material for MkDocs), published on GitLab Pages by
+# the `pages` job. Locally: `uv run --group docs mkdocs serve`.
+site_name: ediarum.fileservice
+site_description: Keeps the projects' XML on the shared volume in step with webdav and git — an ediarum.platform service
+repo_url: https://github.com/ediarum/ediarum.fileservice
+repo_name: ediarum/ediarum.fileservice
+edit_uri: edit/main/docs/
+docs_dir: docs
+exclude_docs: |
+  overrides/
+strict: true
+validation:
+  anchors: warn
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  language: en
+  logo: assets/ediarum-logo.png
+  favicon: assets/ediarum-logo.png
+  # Noto Sans is self-hosted (docs/stylesheets/ediarum.css), no Google Fonts
+  font: false
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Light mode
+
+extra_css:
+  - stylesheets/ediarum.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            docstring_options:
+              # the docstrings document types in the signature, not in Args:
+              warn_missing_types: false
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_symbol_type_heading: true
+            members_order: source
+            filters: ["!^__"]
+            heading_level: 2
+            merge_init_into_class: true
+            show_signature_annotations: true
+            separate_signature: true
+
+nav:
+  - Home: index.md
+  - Operate:
+      - operate/deploy.md
+      - operate/operating.md
+  - Develop:
+      - develop/index.md
+      - develop/running.md
+      - develop/release.md
+      - develop/docs.md
+  - Concepts:
+      - concepts/design.md
+      - concepts/webdav-led-sync.md
+  - Reference:
+      - reference/routes.md
+      - reference/settings.md
+      - reference/cli.md
+  - Python API:
+      - api/index.md
+      - api/app.md
+      - api/check.md
+      - api/git-sync.md
+      - api/config.md
+      - api/database.md
+      - api/keys.md
+      - api/cli.md

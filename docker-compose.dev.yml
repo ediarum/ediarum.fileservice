@@ -1,0 +1,59 @@
+# ediarum.fileservice in Docker against the ediarum.platform's `npm run dev`
+# (its mock login), Linux only — see docs/develop/running.md.
+#
+#   mkdir -p data          # yourself, before the first up: else Docker creates it as root
+#   mkdir -p data/platform && $EDITOR data/platform/projects   # the local registry, once
+#   docker compose -p ediarum-fileservice-dev -f docker-compose.dev.yml up -d --build
+#   docker compose -p ediarum-fileservice-dev -f docker-compose.dev.yml exec fileservice \
+#     ediarum-fileservice-create-key --admin                     # for the index/id watchers
+#
+# - fileservice: on the host's network, so it reaches the platform's verify at
+#   localhost:5173 and is itself at localhost:${DEV_PORT:-8002}
+#   (EDIARUM_DEV_BACKENDS=fileservice=http://localhost:8002 for the platform)
+# - registry: data/platform/projects served at localhost:${DEV_REGISTRY_PORT:-8901}
+#   as the platform's project registry (JSON rows: slug, label, repo_url,
+#   branch, sparse_path, source_of_truth) — or, with PLATFORM_PROJECTS_URL
+#   and PLATFORM_SERVICE_TOKEN in .env, a running platform's registry
+#   (`up -d fileservice` then skips this container)
+#
+# Everything lives in ./data (git-ignored), the same layout as `uv run`:
+# data/xml (the clones — the index's DEV_XML_DIR=../ediarum.fileservice/data/xml),
+# data/fileservice.db, and optionally data/git_token (read access to private
+# repositories; without it git clones without credentials). The container
+# runs as DEV_UID:DEV_GID (default 1000:1000), so these files stay yours.
+
+x-dev: &dev
+  network_mode: host
+  restart: unless-stopped
+  user: ${DEV_UID:-1000}:${DEV_GID:-1000}
+
+services:
+  fileservice:
+    <<: *dev
+    build: .
+    image: ediarum-fileservice:dev
+    environment:
+      PORT: ${DEV_PORT:-8002}
+      HOME: /tmp
+      XML_MOUNT_ROOT: /data/xml
+      DATABASE_URL: sqlite:////data/fileservice.db
+      PLATFORM_PROJECTS_URL: ${PLATFORM_PROJECTS_URL:-http://127.0.0.1:${DEV_REGISTRY_PORT:-8901}/projects}
+      PLATFORM_SERVICE_TOKEN: ${PLATFORM_SERVICE_TOKEN:-}
+      AUTH_VERIFY_URL: http://localhost:5173/api/auth/verify
+      GIT_TOKEN_FILE: /data/git_token
+      CHECK_TIMES: ${CHECK_TIMES:-03:00,15:00}
+      CHECK_TIMEZONE: ${CHECK_TIMEZONE:-Europe/Berlin}
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:${DEV_PORT:-8002}/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  registry:
+    <<: *dev
+    image: python:3.13-slim
+    command: ["python", "-m", "http.server", "${DEV_REGISTRY_PORT:-8901}", "--bind", "127.0.0.1", "-d", "/srv"]
+    volumes:
+      - ./data/platform:/srv:ro

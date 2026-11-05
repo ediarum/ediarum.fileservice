@@ -1,0 +1,9 @@
+# Only the package goes into the image; data, databases and secrets never do.
+*
+!pyproject.toml
+!uv.lock
+!README.md
+!src
+!docker/git-credential-token
+**/__pycache__
+**/*.py[oc]
